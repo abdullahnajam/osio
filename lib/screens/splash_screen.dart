@@ -286,7 +286,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     Center(
                       child: InkWell(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  SplashScreen()));
+                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  BottomNavBar()));
 
                         },
                         child: Container(
