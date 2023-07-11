@@ -110,6 +110,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       _controller!.play();
+                      print('aspect 1 ${_controller!.value.aspectRatio}');
                       return Container(
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height,
@@ -131,12 +132,17 @@ class _SplashScreenState extends State<SplashScreen> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       _controller2!.play();
-                      return Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        child: AspectRatio(
-                          aspectRatio: _controller2!.value.aspectRatio,
-                          child: VideoPlayer(_controller2!),
+                      return SizedBox.expand(
+                        child: FittedBox(
+                          fit: BoxFit.cover,
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height,
+                            child: AspectRatio(
+                              aspectRatio: _controller2!.value.aspectRatio,
+                              child: VideoPlayer(_controller2!),
+                            ),
+                          ),
                         ),
                       );
                     } else {
@@ -152,11 +158,12 @@ class _SplashScreenState extends State<SplashScreen> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       _controller3!.play();
+                      print('aspect 3 ${_controller!.value.aspectRatio}');
                       return Container(
                         width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
+                        height: MediaQuery.of(context).size.height*0.9,
                         child: AspectRatio(
-                          aspectRatio: _controller3!.value.aspectRatio,
+                          aspectRatio: 1.5,
                           child: VideoPlayer(_controller3!),
                         ),
                       );
@@ -279,7 +286,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     Center(
                       child: InkWell(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  BottomNavBar()));
+                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  SplashScreen()));
 
                         },
                         child: Container(
