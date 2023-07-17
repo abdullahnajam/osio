@@ -26,6 +26,12 @@
 	<true/>
 	<key>NSUserNotificationsUsageDescription</key>
     <string>Push Notification Permission.</string>
+    <key>NSCameraUsageDescription</key>
+	<string>Osio requires camera to add your profile photo.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Osio Do Not Use Microphone</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Osio requires photo library to add your profile photo.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
