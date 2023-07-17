@@ -1,9 +1,21 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:osio/navigator/bottom_nav.dart';
 import 'package:osio/screens/home_page.dart';
 import 'package:osio/screens/splash_screen.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    /*options: const FirebaseOptions(
+        apiKey: "AIzaSyDYBppmJeQuHYQ1HQvz7qvKnhk3wMgJJCY",
+        authDomain: "osio-c091e.firebaseapp.com",
+        projectId: "osio-c091e",
+        storageBucket: "osio-c091e.appspot.com",
+        messagingSenderId: "285830947753",
+        appId: "1:285830947753:web:402c7dafc0144a43245ab8"
+    ),*/
+  );
   runApp(const MyApp());
 }
 

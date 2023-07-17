@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:osio/model/coach_model.dart';
+import 'package:osio/model/facility_model.dart';
+import 'package:osio/model/program_model.dart';
 import 'package:osio/screens/discovery_details.dart';
 import 'package:osio/screens/filter_screen.dart';
 import 'package:osio/utils/constants.dart';
@@ -156,345 +160,48 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10,right: 10),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: (){
-                                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  DiscoveryDetails()));
-
-                                  },
-                                  child: Container(
-
-                                    margin: EdgeInsets.fromLTRB(10,10,5,10),
-                                    height: 200,
-                                    decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(20),
-                                            bottomRight: Radius.circular(20)
-                                        ),
-                                        color: Color(0xff9E793C)
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        Align(
-                                            alignment: Alignment.topRight,
-                                            child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Container(
-                                                height: 40,
-                                                  width: 40,
-                                                  decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                          image: AssetImage('assets/images/chat.png',),
-                                                          fit: BoxFit.cover
-                                                      )
-                                                  ),
-                                                alignment: Alignment.topCenter,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(top: 3),
-                                                  child: Text('34',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
-                                                ),
-                                              )
-                                            )
-                                        ),
-                                        Align(
-                                            alignment: Alignment.bottomLeft,
-                                            child: Container(
-                                              height: 150,
-                                              width: 150,
-                                              decoration: const BoxDecoration(
-                                                  borderRadius: BorderRadius.only(
-
-                                                      bottomRight: Radius.circular(50)
-                                                  ),
-                                                  image: DecorationImage(
-                                                      image: AssetImage('assets/images/sub_c_1.png',),
-                                                      fit: BoxFit.cover
-                                                  )
-
-                                              ),
-
-                                            )
-                                        ),
-                                        const Padding(
-                                          padding: EdgeInsets.all(20),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              SizedBox(height: 20,),
-                                              Text('Abraham Williamson',style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w900),),
-
-                                              Text('California',style: TextStyle(color: Colors.white),),
-                                              SizedBox(height: 20,),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                children: [
-                                                  Text('This Coach has not\nyet been rated',textAlign: TextAlign.end,style: TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.w600),)
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        ),
-
-                                      ],
-                                    ),
-                                  ),
+                        StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance.collection('coaches').snapshots(),
+                          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.hasError) {
+                              return const Text('Something went wrong');
+                            }
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return Container(
+                                margin: const EdgeInsets.all(30),
+                                alignment: Alignment.center,
+                                child: const CircularProgressIndicator(),
+                              );
+                            }
+                            if (snapshot.data!.size==0){
+                              return Container(
+                                width: double.infinity,
+                                margin: const EdgeInsets.all(20),
+                                padding: const EdgeInsets.all(80),
+                                alignment: Alignment.center,
+                                child: const Text("No data found"),
+                              );
+                            }
+                            print("size ${snapshot.data!.size}");
+                            return  Padding(
+                              padding: const EdgeInsets.only(left: 20,right: 20),
+                              child: GridView(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 5.0,
+                                  mainAxisSpacing: 12.0,
+                                  childAspectRatio:MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1.8),
                                 ),
+                                children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                                  Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                                  CoachModel model=CoachModel.fromMap(data, document.reference.id);
+                                  return coachCard(model);
+                                }).toList(),
                               ),
-                              Expanded(
-                                flex: 1,
-                                child: Container(
-                                  margin: EdgeInsets.fromLTRB(5,10,10,10),
-
-                                  height: 200,
-                                  decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          bottomRight: Radius.circular(20)
-                                      ),
-                                      color: Color(0xff9E793C)
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Align(
-                                          alignment: Alignment.topRight,
-                                          child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Container(
-                                                height: 40,
-                                                width: 40,
-                                                decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                        image: AssetImage('assets/images/chat.png',),
-                                                        fit: BoxFit.cover
-                                                    )
-                                                ),
-                                                alignment: Alignment.topCenter,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(top: 3),
-                                                  child: Text('34',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
-                                                ),
-                                              )
-                                          )
-                                      ),
-                                      Align(
-                                          alignment: Alignment.bottomLeft,
-                                          child: Container(
-                                            height: 150,
-                                            width: 150,
-                                            decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-
-                                                    bottomRight: Radius.circular(50)
-                                                ),
-                                                image: DecorationImage(
-                                                    image: AssetImage('assets/images/sub_c_1.png',),
-                                                    fit: BoxFit.cover
-                                                )
-
-                                            ),
-
-                                          )
-                                      ),
-                                      const Padding(
-                                        padding: EdgeInsets.all(20),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            SizedBox(height: 20,),
-                                            Text('Abraham Williamson',style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w900),),
-
-                                            Text('California',style: TextStyle(color: Colors.white),),
-                                            SizedBox(height: 20,),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
-                                              children: [
-                                                Text('This Coach has not\nyet been rated',textAlign: TextAlign.end,style: TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.w600),)
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10,right: 10),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: Container(
-
-                                  margin: EdgeInsets.fromLTRB(10,10,5,10),
-                                  height: 200,
-                                  decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          bottomRight: Radius.circular(20)
-                                      ),
-                                      color: Color(0xff9E793C)
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Align(
-                                          alignment: Alignment.topRight,
-                                          child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Container(
-                                                height: 40,
-                                                width: 40,
-                                                decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                        image: AssetImage('assets/images/chat.png',),
-                                                        fit: BoxFit.cover
-                                                    )
-                                                ),
-                                                alignment: Alignment.topCenter,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(top: 3),
-                                                  child: Text('34',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
-                                                ),
-                                              )
-                                          )
-                                      ),
-                                      Align(
-                                          alignment: Alignment.bottomLeft,
-                                          child: Container(
-                                            height: 150,
-                                            width: 150,
-                                            decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-
-                                                    bottomRight: Radius.circular(50)
-                                                ),
-                                                image: DecorationImage(
-                                                    image: AssetImage('assets/images/sub_c_1.png',),
-                                                    fit: BoxFit.cover
-                                                )
-
-                                            ),
-
-                                          )
-                                      ),
-                                      const Padding(
-                                        padding: EdgeInsets.all(20),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            SizedBox(height: 20,),
-                                            Text('Abraham Williamson',style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w900),),
-
-                                            Text('California',style: TextStyle(color: Colors.white),),
-                                            SizedBox(height: 20,),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
-                                              children: [
-                                                Text('This Coach has not\nyet been rated',textAlign: TextAlign.end,style: TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.w600),)
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Container(
-                                  margin: EdgeInsets.fromLTRB(5,10,10,10),
-
-                                  height: 200,
-                                  decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          bottomRight: Radius.circular(20)
-                                      ),
-                                      color: Color(0xff9E793C)
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Align(
-                                          alignment: Alignment.topRight,
-                                          child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Container(
-                                                height: 40,
-                                                width: 40,
-                                                decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                        image: AssetImage('assets/images/chat.png',),
-                                                        fit: BoxFit.cover
-                                                    )
-                                                ),
-                                                alignment: Alignment.topCenter,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(top: 3),
-                                                  child: Text('34',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
-                                                ),
-                                              )
-                                          )
-                                      ),
-                                      Align(
-                                          alignment: Alignment.bottomLeft,
-                                          child: Container(
-                                            height: 150,
-                                            width: 150,
-                                            decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-
-                                                    bottomRight: Radius.circular(50)
-                                                ),
-                                                image: DecorationImage(
-                                                    image: AssetImage('assets/images/sub_c_1.png',),
-                                                    fit: BoxFit.cover
-                                                )
-
-                                            ),
-
-                                          )
-                                      ),
-                                      const Padding(
-                                        padding: EdgeInsets.all(20),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            SizedBox(height: 20,),
-                                            Text('Abraham Williamson',style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w900),),
-
-                                            Text('California',style: TextStyle(color: Colors.white),),
-                                            SizedBox(height: 20,),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
-                                              children: [
-                                                Text('This Coach has not\nyet been rated',textAlign: TextAlign.end,style: TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.w600),)
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
                         SizedBox(height: 20,)
                       ],
@@ -566,346 +273,50 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10,right: 10),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: (){
-                                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  DiscoveryDetails()));
-
-                                  },
-                                  child: Container(
-
-                                    margin: EdgeInsets.fromLTRB(10,10,5,10),
-                                    height: 200,
-                                    decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(20),
-                                            bottomRight: Radius.circular(20)
-                                        ),
-                                        color: Color(0xff8288C0)
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        Align(
-                                            alignment: Alignment.topRight,
-                                            child: Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Container(
-                                                  height: 40,
-                                                  width: 40,
-                                                  decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                          image: AssetImage('assets/images/chat.png',),
-                                                          fit: BoxFit.cover
-                                                      )
-                                                  ),
-                                                  alignment: Alignment.topCenter,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.only(top: 3),
-                                                    child: Text('34',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
-                                                  ),
-                                                )
-                                            )
-                                        ),
-                                        Align(
-                                            alignment: Alignment.bottomLeft,
-                                            child: Container(
-                                              height: 150,
-                                              width: 150,
-                                              decoration: const BoxDecoration(
-                                                  borderRadius: BorderRadius.only(
-
-                                                      bottomRight: Radius.circular(50)
-                                                  ),
-                                                  image: DecorationImage(
-                                                      image: AssetImage('assets/images/sub_c_2.png',),
-                                                      fit: BoxFit.cover
-                                                  )
-
-                                              ),
-
-                                            )
-                                        ),
-                                        const Padding(
-                                          padding: EdgeInsets.all(20),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              SizedBox(height: 20,),
-                                              Text('Abraham Williamson',style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w900),),
-
-                                              Text('California',style: TextStyle(color: Colors.white),),
-                                              SizedBox(height: 20,),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                children: [
-                                                  Text('This Coach has not\nyet been rated',textAlign: TextAlign.end,style: TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.w600),)
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        ),
-
-                                      ],
-                                    ),
-                                  ),
+                        StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance.collection('programs').snapshots(),
+                          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.hasError) {
+                              return const Text('Something went wrong');
+                            }
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return Container(
+                                margin: const EdgeInsets.all(30),
+                                alignment: Alignment.center,
+                                child: const CircularProgressIndicator(),
+                              );
+                            }
+                            if (snapshot.data!.size==0){
+                              return Container(
+                                width: double.infinity,
+                                margin: const EdgeInsets.all(20),
+                                padding: const EdgeInsets.all(80),
+                                alignment: Alignment.center,
+                                child: const Text("No data found"),
+                              );
+                            }
+                            print("size ${snapshot.data!.size}");
+                            return  Padding(
+                              padding: const EdgeInsets.only(left: 20,right: 20),
+                              child: GridView(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 5.0,
+                                  mainAxisSpacing: 12.0,
+                                  childAspectRatio:MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1.8),
                                 ),
+                                children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                                  Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                                  ProgramModel model=ProgramModel.fromMap(data, document.reference.id);
+                                  return programCard(model);
+                                }).toList(),
                               ),
-                              Expanded(
-                                flex: 1,
-                                child: Container(
-                                  margin: EdgeInsets.fromLTRB(5,10,10,10),
-
-                                  height: 200,
-                                  decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          bottomRight: Radius.circular(20)
-                                      ),
-                                      color: Color(0xff8288C0)
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Align(
-                                          alignment: Alignment.topRight,
-                                          child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Container(
-                                                height: 40,
-                                                width: 40,
-                                                decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                        image: AssetImage('assets/images/chat.png',),
-                                                        fit: BoxFit.cover
-                                                    )
-                                                ),
-                                                alignment: Alignment.topCenter,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(top: 3),
-                                                  child: Text('34',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
-                                                ),
-                                              )
-                                          )
-                                      ),
-                                      Align(
-                                          alignment: Alignment.bottomLeft,
-                                          child: Container(
-                                            height: 150,
-                                            width: 150,
-                                            decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-
-                                                    bottomRight: Radius.circular(50)
-                                                ),
-                                                image: DecorationImage(
-                                                    image: AssetImage('assets/images/sub_c_2.png',),
-                                                    fit: BoxFit.cover
-                                                )
-
-                                            ),
-
-                                          )
-                                      ),
-                                      const Padding(
-                                        padding: EdgeInsets.all(20),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            SizedBox(height: 20,),
-                                            Text('Abraham Williamson',style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w900),),
-
-                                            Text('California',style: TextStyle(color: Colors.white),),
-                                            SizedBox(height: 20,),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
-                                              children: [
-                                                Text('This Coach has not\nyet been rated',textAlign: TextAlign.end,style: TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.w600),)
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10,right: 10),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: Container(
 
-                                  margin: EdgeInsets.fromLTRB(10,10,5,10),
-                                  height: 200,
-                                  decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          bottomRight: Radius.circular(20)
-                                      ),
-                                      color: Color(0xff8288C0)
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Align(
-                                          alignment: Alignment.topRight,
-                                          child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Container(
-                                                height: 40,
-                                                width: 40,
-                                                decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                        image: AssetImage('assets/images/chat.png',),
-                                                        fit: BoxFit.cover
-                                                    )
-                                                ),
-                                                alignment: Alignment.topCenter,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(top: 3),
-                                                  child: Text('34',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
-                                                ),
-                                              )
-                                          )
-                                      ),
-                                      Align(
-                                          alignment: Alignment.bottomLeft,
-                                          child: Container(
-                                            height: 150,
-                                            width: 150,
-                                            decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-
-                                                    bottomRight: Radius.circular(50)
-                                                ),
-                                                image: DecorationImage(
-                                                    image: AssetImage('assets/images/sub_c_2.png',),
-                                                    fit: BoxFit.cover
-                                                )
-
-                                            ),
-
-                                          )
-                                      ),
-                                      const Padding(
-                                        padding: EdgeInsets.all(20),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            SizedBox(height: 20,),
-                                            Text('Abraham Williamson',style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w900),),
-
-                                            Text('California',style: TextStyle(color: Colors.white),),
-                                            SizedBox(height: 20,),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
-                                              children: [
-                                                Text('This Coach has not\nyet been rated',textAlign: TextAlign.end,style: TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.w600),)
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Container(
-                                  margin: EdgeInsets.fromLTRB(5,10,10,10),
-
-                                  height: 200,
-                                  decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          bottomRight: Radius.circular(20)
-                                      ),
-                                      color: Color(0xff8288C0)
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Align(
-                                          alignment: Alignment.topRight,
-                                          child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Container(
-                                                height: 40,
-                                                width: 40,
-                                                decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                        image: AssetImage('assets/images/chat.png',),
-                                                        fit: BoxFit.cover
-                                                    )
-                                                ),
-                                                alignment: Alignment.topCenter,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(top: 3),
-                                                  child: Text('34',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
-                                                ),
-                                              )
-                                          )
-                                      ),
-                                      Align(
-                                          alignment: Alignment.bottomLeft,
-                                          child: Container(
-                                            height: 150,
-                                            width: 150,
-                                            decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-
-                                                    bottomRight: Radius.circular(50)
-                                                ),
-                                                image: DecorationImage(
-                                                    image: AssetImage('assets/images/sub_c_2.png',),
-                                                    fit: BoxFit.cover
-                                                )
-
-                                            ),
-
-                                          )
-                                      ),
-                                      const Padding(
-                                        padding: EdgeInsets.all(20),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            SizedBox(height: 20,),
-                                            Text('Abraham Williamson',style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w900),),
-
-                                            Text('California',style: TextStyle(color: Colors.white),),
-                                            SizedBox(height: 20,),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
-                                              children: [
-                                                Text('This Coach has not\nyet been rated',textAlign: TextAlign.end,style: TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.w600),)
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                         SizedBox(height: 20,)
                       ],
                     ),
@@ -976,345 +387,49 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10,right: 10),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: (){
-                                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  DiscoveryDetails()));
 
-                                  },
-                                  child: Container(
-
-                                    margin: EdgeInsets.fromLTRB(10,10,5,10),
-                                    height: 200,
-                                    decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(20),
-                                            bottomRight: Radius.circular(20)
-                                        ),
-                                        color: Color(0xff8D2C67)
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        Align(
-                                            alignment: Alignment.topRight,
-                                            child: Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Container(
-                                                  height: 40,
-                                                  width: 40,
-                                                  decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                          image: AssetImage('assets/images/chat.png',),
-                                                          fit: BoxFit.cover
-                                                      )
-                                                  ),
-                                                  alignment: Alignment.topCenter,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.only(top: 3),
-                                                    child: Text('34',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
-                                                  ),
-                                                )
-                                            )
-                                        ),
-                                        Align(
-                                            alignment: Alignment.bottomLeft,
-                                            child: Container(
-                                              height: 150,
-                                              width: 150,
-                                              decoration: const BoxDecoration(
-                                                  borderRadius: BorderRadius.only(
-
-                                                      bottomRight: Radius.circular(50)
-                                                  ),
-                                                  image: DecorationImage(
-                                                      image: AssetImage('assets/images/sub_c_3.png',),
-                                                      fit: BoxFit.cover
-                                                  )
-
-                                              ),
-
-                                            )
-                                        ),
-                                        const Padding(
-                                          padding: EdgeInsets.all(20),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              SizedBox(height: 20,),
-                                              Text('Abraham Williamson',style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w900),),
-
-                                              Text('California',style: TextStyle(color: Colors.white),),
-                                              SizedBox(height: 20,),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                children: [
-                                                  Text('This Coach has not\nyet been rated',textAlign: TextAlign.end,style: TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.w600),)
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        ),
-
-                                      ],
-                                    ),
-                                  ),
+                        StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance.collection('facilities').snapshots(),
+                          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.hasError) {
+                              return const Text('Something went wrong');
+                            }
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return Container(
+                                margin: const EdgeInsets.all(30),
+                                alignment: Alignment.center,
+                                child: const CircularProgressIndicator(),
+                              );
+                            }
+                            if (snapshot.data!.size==0){
+                              return Container(
+                                width: double.infinity,
+                                margin: const EdgeInsets.all(20),
+                                padding: const EdgeInsets.all(80),
+                                alignment: Alignment.center,
+                                child: const Text("No data found"),
+                              );
+                            }
+                            print("size ${snapshot.data!.size}");
+                            return  Padding(
+                              padding: const EdgeInsets.only(left: 20,right: 20),
+                              child: GridView(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 5.0,
+                                  mainAxisSpacing: 12.0,
+                                  childAspectRatio:MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1.8),
                                 ),
+                                children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                                  Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                                  FacilityModel model=FacilityModel.fromMap(data, document.reference.id);
+                                  return facilityCard(model);
+                                }).toList(),
                               ),
-                              Expanded(
-                                flex: 1,
-                                child: Container(
-                                  margin: EdgeInsets.fromLTRB(5,10,10,10),
-
-                                  height: 200,
-                                  decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          bottomRight: Radius.circular(20)
-                                      ),
-                                      color: Color(0xff8D2C67)
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Align(
-                                          alignment: Alignment.topRight,
-                                          child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Container(
-                                                height: 40,
-                                                width: 40,
-                                                decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                        image: AssetImage('assets/images/chat.png',),
-                                                        fit: BoxFit.cover
-                                                    )
-                                                ),
-                                                alignment: Alignment.topCenter,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(top: 3),
-                                                  child: Text('34',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
-                                                ),
-                                              )
-                                          )
-                                      ),
-                                      Align(
-                                          alignment: Alignment.bottomLeft,
-                                          child: Container(
-                                            height: 150,
-                                            width: 150,
-                                            decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-
-                                                    bottomRight: Radius.circular(50)
-                                                ),
-                                                image: DecorationImage(
-                                                    image: AssetImage('assets/images/sub_c_3.png',),
-                                                    fit: BoxFit.cover
-                                                )
-
-                                            ),
-
-                                          )
-                                      ),
-                                      const Padding(
-                                        padding: EdgeInsets.all(20),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            SizedBox(height: 20,),
-                                            Text('Abraham Williamson',style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w900),),
-
-                                            Text('California',style: TextStyle(color: Colors.white),),
-                                            SizedBox(height: 20,),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
-                                              children: [
-                                                Text('This Coach has not\nyet been rated',textAlign: TextAlign.end,style: TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.w600),)
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10,right: 10),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: Container(
-
-                                  margin: EdgeInsets.fromLTRB(10,10,5,10),
-                                  height: 200,
-                                  decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          bottomRight: Radius.circular(20)
-                                      ),
-                                      color: Color(0xff8D2C67)
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Align(
-                                          alignment: Alignment.topRight,
-                                          child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Container(
-                                                height: 40,
-                                                width: 40,
-                                                decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                        image: AssetImage('assets/images/chat.png',),
-                                                        fit: BoxFit.cover
-                                                    )
-                                                ),
-                                                alignment: Alignment.topCenter,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(top: 3),
-                                                  child: Text('34',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
-                                                ),
-                                              )
-                                          )
-                                      ),
-                                      Align(
-                                          alignment: Alignment.bottomLeft,
-                                          child: Container(
-                                            height: 150,
-                                            width: 150,
-                                            decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-
-                                                    bottomRight: Radius.circular(50)
-                                                ),
-                                                image: DecorationImage(
-                                                    image: AssetImage('assets/images/sub_c_3.png',),
-                                                    fit: BoxFit.cover
-                                                )
-
-                                            ),
-
-                                          )
-                                      ),
-                                      const Padding(
-                                        padding: EdgeInsets.all(20),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            SizedBox(height: 20,),
-                                            Text('Abraham Williamson',style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w900),),
-
-                                            Text('California',style: TextStyle(color: Colors.white),),
-                                            SizedBox(height: 20,),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
-                                              children: [
-                                                Text('This Coach has not\nyet been rated',textAlign: TextAlign.end,style: TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.w600),)
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Container(
-                                  margin: EdgeInsets.fromLTRB(5,10,10,10),
-
-                                  height: 200,
-                                  decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          bottomRight: Radius.circular(20)
-                                      ),
-                                      color: Color(0xff8D2C67)
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Align(
-                                          alignment: Alignment.topRight,
-                                          child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Container(
-                                                height: 40,
-                                                width: 40,
-                                                decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                        image: AssetImage('assets/images/chat.png',),
-                                                        fit: BoxFit.cover
-                                                    )
-                                                ),
-                                                alignment: Alignment.topCenter,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(top: 3),
-                                                  child: Text('34',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
-                                                ),
-                                              )
-                                          )
-                                      ),
-                                      Align(
-                                          alignment: Alignment.bottomLeft,
-                                          child: Container(
-                                            height: 150,
-                                            width: 150,
-                                            decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-
-                                                    bottomRight: Radius.circular(50)
-                                                ),
-                                                image: DecorationImage(
-                                                    image: AssetImage('assets/images/sub_c_3.png',),
-                                                    fit: BoxFit.cover
-                                                )
-
-                                            ),
-
-                                          )
-                                      ),
-                                      const Padding(
-                                        padding: EdgeInsets.all(20),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            SizedBox(height: 20,),
-                                            Text('Abraham Williamson',style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w900),),
-
-                                            Text('California',style: TextStyle(color: Colors.white),),
-                                            SizedBox(height: 20,),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
-                                              children: [
-                                                Text('This Coach has not\nyet been rated',textAlign: TextAlign.end,style: TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.w600),)
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
                         SizedBox(height: 20,)
                       ],
@@ -1324,6 +439,261 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                 ],
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+  Widget coachCard(CoachModel model){
+    return InkWell(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  DiscoveryDetails()));
+
+      },
+      child: Container(
+
+        margin: EdgeInsets.fromLTRB(10,10,5,10),
+        height: 200,
+        decoration: const BoxDecoration(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20)
+            ),
+            color: Color(0xff9E793C)
+        ),
+        child: Stack(
+          children: [
+            Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage('assets/images/chat.png',),
+                              fit: BoxFit.cover
+                          )
+                      ),
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 3),
+                        child: Text('34',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
+                      ),
+                    )
+                )
+            ),
+            Align(
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                  height: 150,
+                  width: 150,
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+
+                          bottomRight: Radius.circular(50)
+                      ),
+                      image: DecorationImage(
+                          image: AssetImage('assets/images/sub_c_1.png',),
+                          fit: BoxFit.cover
+                      )
+
+                  ),
+
+                )
+            ),
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: 20,),
+                  Text('${model.firstName} ${model.lastName}',style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w900),),
+
+                  Text(model.state,style: TextStyle(color: Colors.white),),
+                  SizedBox(height: 20,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text('This Coach has not\nyet been rated',textAlign: TextAlign.end,style: TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.w600),)
+                    ],
+                  )
+                ],
+              ),
+            ),
+
+          ],
+        ),
+      ),
+    );
+  }
+  Widget programCard(ProgramModel model){
+    return InkWell(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  DiscoveryDetails()));
+
+      },
+      child: Container(
+
+        margin: EdgeInsets.fromLTRB(10,10,5,10),
+        height: 200,
+        decoration: const BoxDecoration(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20)
+            ),
+            color: Color(0xff8288C0)
+        ),
+        child: Stack(
+          children: [
+            Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage('assets/images/chat.png',),
+                              fit: BoxFit.cover
+                          )
+                      ),
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 3),
+                        child: Text('34',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
+                      ),
+                    )
+                )
+            ),
+            Align(
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                  height: 150,
+                  width: 150,
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+
+                          bottomRight: Radius.circular(50)
+                      ),
+                      image: DecorationImage(
+                          image: AssetImage('assets/images/sub_c_2.png',),
+                          fit: BoxFit.cover
+                      )
+
+                  ),
+
+                )
+            ),
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: 20,),
+                  Text(model.program,style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w900),),
+
+                  Text(model.state,style: TextStyle(color: Colors.white),),
+                  SizedBox(height: 20,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text('This Program has not\nyet been rated',textAlign: TextAlign.end,style: TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.w600),)
+                    ],
+                  )
+                ],
+              ),
+            ),
+
+          ],
+        ),
+      ),
+    );
+  }
+  Widget facilityCard(FacilityModel model){
+    return InkWell(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  DiscoveryDetails()));
+
+      },
+      child: Container(
+
+        margin: EdgeInsets.fromLTRB(10,10,5,10),
+        height: 200,
+        decoration: const BoxDecoration(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20)
+            ),
+            color: Color(0xff8D2C67)
+        ),
+        child: Stack(
+          children: [
+            Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage('assets/images/chat.png',),
+                              fit: BoxFit.cover
+                          )
+                      ),
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 3),
+                        child: Text('34',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
+                      ),
+                    )
+                )
+            ),
+            Align(
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                  height: 150,
+                  width: 150,
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+
+                          bottomRight: Radius.circular(50)
+                      ),
+                      image: DecorationImage(
+                          image: AssetImage('assets/images/sub_c_3.png',),
+                          fit: BoxFit.cover
+                      )
+
+                  ),
+
+                )
+            ),
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: 20,),
+                  Text(model.name,style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w900),),
+
+                  Text(model.state,style: TextStyle(color: Colors.white),),
+                  SizedBox(height: 20,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text('This Facility has not\nyet been rated',textAlign: TextAlign.end,style: TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.w600),)
+                    ],
+                  )
+                ],
+              ),
+            ),
+
           ],
         ),
       ),
