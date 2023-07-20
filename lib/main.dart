@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:osio/navigator/bottom_nav.dart';
 import 'package:osio/screens/home_page.dart';
+import 'package:osio/screens/get_started.dart';
 import 'package:osio/screens/splash_screen.dart';
 
 void main() async{

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:osio/screens/discover.dart';
 import 'package:osio/screens/home_page.dart';
 import '../../utils/constants.dart';
-import '../screens/splash_screen.dart';
+import '../screens/get_started.dart';
 
 class BottomNavBar extends StatefulWidget {
 
