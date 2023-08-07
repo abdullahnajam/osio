@@ -1,9 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:osio/navigator/bottom_nav.dart';
+import 'package:osio/provider/filter_provider.dart';
 import 'package:osio/screens/home_page.dart';
 import 'package:osio/screens/get_started.dart';
 import 'package:osio/screens/splash_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,13 +28,25 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'OSIO',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
-        useMaterial3: true,
-      ),
-      home: SplashScreen(),
+    return MultiProvider(
+        providers: [
+
+
+          ChangeNotifierProvider<FilterProvider>(
+            create: (_) => FilterProvider(),
+          ),
+
+
+        ],
+        child:  MaterialApp(
+
+          title: 'OSIO',
+          theme: ThemeData(
+            primarySwatch: Colors.brown,
+          ),
+          home: SplashScreen(),
+        )
+
     );
   }
 }

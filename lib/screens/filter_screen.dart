@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:osio/utils/constants.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
+
+import '../provider/filter_provider.dart';
 
 class FilterScreen extends StatefulWidget {
   const FilterScreen({Key? key}) : super(key: key);
@@ -11,15 +14,17 @@ class FilterScreen extends StatefulWidget {
 
 class _FilterScreenState extends State<FilterScreen> {
 
-  SfRangeValues _values = SfRangeValues(1, 9);
+  SfRangeValues _values = const SfRangeValues(1, 9);
+  var nameController=TextEditingController();
+  var programController=TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bgColor,
+
       body: SafeArea(
         child: ListView(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           children: [
 
             Row(
@@ -30,12 +35,12 @@ class _FilterScreenState extends State<FilterScreen> {
                   onTap: (){
                     Navigator.pop(context);
                   },
-                  child: Icon(Icons.close),
+                  child: const Icon(Icons.close),
                 )
               ],
             ),
-            SizedBox(height: 10,),
-            Divider(color: Colors.black,thickness: 0.1,),
+            const SizedBox(height: 10,),
+            const Divider(color: Colors.black,thickness: 0.1,),
             const SizedBox(height: 10,),
             const Text('Keyword Search.',style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.w700),),
 
@@ -54,8 +59,9 @@ class _FilterScreenState extends State<FilterScreen> {
                         }
                         return null;
                       },
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.all(15),
+                      controller: nameController,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.all(15),
 
                         hintText: 'Type here',
                         // If  you are using latest version of flutter then lable text and hint text shown like this
@@ -65,11 +71,49 @@ class _FilterScreenState extends State<FilterScreen> {
                     ),
                   ),
                 ),
-                Icon(Icons.close),
+                InkWell(
+                  onTap: (){
+                    final provider = Provider.of<FilterProvider>(context, listen: false);
+                    provider.addName(nameController.text.trim());
+                    nameController.text='';
+                  },
+                  child: const Icon(Icons.add),
+                )
               ],
             ),
             const SizedBox(height: 20,),
-            Row(
+            Consumer<FilterProvider>(
+              builder: (context, provider, child) {
+                return Wrap(
+                  direction: Axis.horizontal,
+                  children: provider.names.map((name)=>
+                      Container(
+                          width: MediaQuery.of(context).size.width*0.35,
+                          decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(25)
+                          ),
+                          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                          margin: const EdgeInsets.all(5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Text(name,style: const TextStyle(color: Colors.white),),
+                              const SizedBox(width: 10,),
+                              InkWell(
+                                onTap: (){
+                                  provider.removeName(name);
+                                },
+                                child: const Icon(Icons.close,color: Colors.white,size: 15,),
+                              )
+                            ],
+                          )
+                      ),
+                  ).toList(),
+                );
+              },
+            ),
+            /*Row(
               children: [
                 Container(
                     width: MediaQuery.of(context).size.width*0.35,
@@ -88,9 +132,9 @@ class _FilterScreenState extends State<FilterScreen> {
                     )
                 ),
               ],
-            ),
+            ),*/
             const SizedBox(height: 20,),
-            Divider(color: Colors.black,thickness: 0.1,),
+            const Divider(color: Colors.black,thickness: 0.1,),
             const SizedBox(height: 20,),
             Container(
               child: Column(
@@ -105,17 +149,17 @@ class _FilterScreenState extends State<FilterScreen> {
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.black,width: 2),
                     ),
-                    padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                    child: Row(
+                    padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Distance',style: TextStyle(color: Colors.black,fontSize: 15,fontWeight: FontWeight.w700),),
+                        Text('Distance',style: TextStyle(color: Colors.black,fontSize: 15,fontWeight: FontWeight.w700),),
                         Icon(Icons.arrow_drop_down)
                       ],
                     ),
                   ),
                   const SizedBox(height: 20,),
-                  Divider(color: Colors.black,thickness: 0.1,),
+                  const Divider(color: Colors.black,thickness: 0.1,),
                   const SizedBox(height: 20,),
                 ],
               ),
@@ -128,7 +172,7 @@ class _FilterScreenState extends State<FilterScreen> {
                   const Text('Additional Options',style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.w700),),
                   SizedBox(
                     width: MediaQuery.of(context).size.width*0.55,
-                    child: Divider(color: Colors.black,thickness: 0.1,),
+                    child: const Divider(color: Colors.black,thickness: 0.1,),
                   ),
                   const SizedBox(height: 20,),
                   const Text('Search by Region',style: TextStyle(fontSize:13,color: Colors.black,fontWeight: FontWeight.w700),),
@@ -138,11 +182,11 @@ class _FilterScreenState extends State<FilterScreen> {
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.black,width: 2),
                     ),
-                    padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                    child: Row(
+                    padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('State',style: TextStyle(color: Colors.black,fontSize: 15,fontWeight: FontWeight.w700),),
+                        Text('State',style: TextStyle(color: Colors.black,fontSize: 15,fontWeight: FontWeight.w700),),
                         Icon(Icons.arrow_drop_down)
                       ],
                     ),
@@ -153,11 +197,11 @@ class _FilterScreenState extends State<FilterScreen> {
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.black,width: 2),
                     ),
-                    padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                    child: Row(
+                    padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('City',style: TextStyle(color: Colors.black,fontSize: 15,fontWeight: FontWeight.w700),),
+                        Text('City',style: TextStyle(color: Colors.black,fontSize: 15,fontWeight: FontWeight.w700),),
                         Icon(Icons.arrow_drop_down)
                       ],
                     ),
@@ -165,47 +209,55 @@ class _FilterScreenState extends State<FilterScreen> {
                   const SizedBox(height: 20,),
                   SizedBox(
                     width: MediaQuery.of(context).size.width*0.55,
-                    child: Divider(color: Colors.black,thickness: 0.1,),
+                    child: const Divider(color: Colors.black,thickness: 0.1,),
                   ),
                   const SizedBox(height: 20,),
                   const Text('Search by Program',style: TextStyle(fontSize:13,color: Colors.black,fontWeight: FontWeight.w700),),
                   const SizedBox(height: 10,),
                   const Text('Choose a minium and maximum rating',style: TextStyle(fontSize:13,color: Colors.black,fontWeight: FontWeight.w300),),
                   const SizedBox(height: 20,),
-                  TextFormField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      return null;
+                  Consumer<FilterProvider>(
+                    builder: (context, provider, child) {
+                      return TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          return null;
+                        },
+                        controller: programController,
+                        onChanged: (String value){
+                          provider.setProgram(value);
+                        },
+                        decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.only(left: 10),
+                          focusedBorder: OutlineInputBorder(
+
+                            borderSide: BorderSide(
+                                color: Colors.black,width: 2
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+
+                            borderSide: BorderSide(
+                                color: Colors.black,
+                                width: 2
+                            ),
+                          ),
+                          border: OutlineInputBorder(
+
+                            borderSide: BorderSide(
+                              color: Colors.black,
+                              width: 2,
+                            ),
+                          ),
+                          hintText: 'Type Here',
+                          // If  you are using latest version of flutter then lable text and hint text shown like this
+                          // if you r using flutter less then 1.20.* then maybe this is not working properly
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                        ),
+                      );
                     },
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.only(left: 10),
-                      focusedBorder: OutlineInputBorder(
-
-                        borderSide: BorderSide(
-                          color: Colors.black,width: 2
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-
-                        borderSide: BorderSide(
-                            color: Colors.black,
-                            width: 2
-                        ),
-                      ),
-                      border: OutlineInputBorder(
-
-                        borderSide: BorderSide(
-                          color: Colors.black,
-                          width: 2,
-                        ),
-                      ),
-                      hintText: 'Type Here',
-                      // If  you are using latest version of flutter then lable text and hint text shown like this
-                      // if you r using flutter less then 1.20.* then maybe this is not working properly
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                    ),
                   ),
                 ],
               ),
@@ -224,7 +276,7 @@ class _FilterScreenState extends State<FilterScreen> {
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.black,width: 2),
                     ),
-                    padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                    padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
                     child: Center(
                       child: SfRangeSlider(
                         min: 0,
@@ -256,12 +308,12 @@ class _FilterScreenState extends State<FilterScreen> {
                       onTap: (){
                         Navigator.pop(context);
                       },
-                      child: Text(
+                      child: const Text(
                         'CANCEL',
                         style: TextStyle(
-                          color: primaryColor,
-                          decoration: TextDecoration.underline,
-                          decorationColor: primaryColor
+                            color: primaryColor,
+                            decoration: TextDecoration.underline,
+                            decorationColor: primaryColor
                         ),
                       ),
                     ),
@@ -277,9 +329,9 @@ class _FilterScreenState extends State<FilterScreen> {
                             color: Colors.black,
                             borderRadius: BorderRadius.circular(25)
                         ),
-                        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                        padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                         alignment: Alignment.center,
-                        child: Text('SAVE CHANGES',style: TextStyle(color: Colors.white),),
+                        child: const Text('SAVE CHANGES',style: TextStyle(color: Colors.white),),
                       ),
                     ),
                   )
