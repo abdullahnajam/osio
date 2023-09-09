@@ -65,7 +65,7 @@ class _DiscoveryDetailsState extends State<DiscoveryDetails> {
                         child: const Text('GYMS & FACILITIES',style: TextStyle(color: Colors.white,fontSize: 12),),
                       ),
                       const SizedBox(height: 10,),
-                      Text(widget.model.program,style: TextStyle(fontSize: 40,fontWeight: FontWeight.w900,color: Colors.white),),
+                      Text(widget.model.program,style: const TextStyle(fontSize: 40,fontWeight: FontWeight.w900,color: Colors.white),),
                       const SizedBox(height: 10,),
                       const Text('California, USA',style: TextStyle(fontSize: 18,fontWeight: FontWeight.w600,color: Colors.white),),
 
@@ -89,7 +89,7 @@ class _DiscoveryDetailsState extends State<DiscoveryDetails> {
                   const SizedBox(height: 5,),
                   Container(
                     color: color1,
-                    padding: const EdgeInsets.only(left: 10,right: 10),
+                    padding: const EdgeInsets.only(left: 10,right: 10), 
                     child: const Text('This is a Shorter Program Name',style: TextStyle(color: Colors.white,fontSize: 12),),
                   ),
                   const SizedBox(height: 5,),

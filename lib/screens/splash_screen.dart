@@ -47,44 +47,6 @@ class _SplashScreenState extends State<SplashScreen>  with TickerProviderStateMi
   void navigationPage() async{
     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => GetStartedScreen()));
 
-    /*if(FirebaseAuth.instance.currentUser!=null){
-      print('userId ${FirebaseAuth.instance.currentUser!.uid}');
-      await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get().then((DocumentSnapshot documentSnapshot) async{
-        if (documentSnapshot.exists) {
-          print("user exists");
-          Map<String, dynamic> data = documentSnapshot.data()! as Map<String, dynamic>;
-          UserModel user=UserModel.fromMap(data,documentSnapshot.reference.id);
-          print("user ${user.userId} ${user.status}");
-          if(user.status=="Pending"){
-            FirebaseAuth.instance.signOut();
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Homepage()));
-
-          }
-          else if(user.status=="Blocked"){
-            FirebaseAuth.instance.signOut();
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Homepage()));
-          }
-// Get all countries
-
-          else if(user.status=="Approved"){
-
-            final provider = Provider.of<UserDataProvider>(context, listen: false);
-            provider.setUserData(user);
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => MyProfile()));
-
-
-
-          }
-        }
-        else{
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Homepage()));
-        }
-
-      });
-    }
-    else{
-      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Homepage()));
-    }*/
   }
 
   @override

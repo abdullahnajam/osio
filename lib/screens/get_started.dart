@@ -199,107 +199,132 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
               ],
 
             ),
-            SafeArea(
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Image.asset('assets/images/logo.png',height: 30,),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: const [
-                            Text('Already have an account?',style: TextStyle(color: Colors.white,fontSize: 12),),
-                            Text('SIGN IN',style: TextStyle(color: primaryColor,fontSize: 15,fontWeight: FontWeight.bold),)
-                          ],
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 50,),
-                    Image.asset('assets/images/slogan.png',height: 200,),
-                    SizedBox(height: 50,),
-                    SmoothPageIndicator(
-                        controller: controller,  // PageController
-                        count:  4,
-                        effect:  WormEffect(
-                          spacing:  10,
-                          radius:  4.0,
-                          dotWidth:  5.0,
-                          dotHeight:  5.0,
-                          activeDotColor: primaryColor,
-                          dotColor: Colors.grey.shade300,
-                          paintStyle:  PaintingStyle.fill,
-                          strokeWidth:  1.5,
-                        ),  // your preferred  effect
-                        onDotClicked: (index){
-                          controller.animateToPage(index,duration: const Duration(seconds: 1),curve: Curves.easeInOut);
-                          controller2.animateToPage(index,duration: const Duration(seconds: 1),curve: Curves.easeInOut);
-                        }
-                    ),
-                    SizedBox(height: 20,),
-                    Container(
-                      height: 140,
-                      child: PageView(
-                        physics: const NeverScrollableScrollPhysics(),
-                        controller: controller2,
-                        children: const [
-
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Our Sport\nis Ours',style: TextStyle(color: primaryColor,fontSize: 25,fontWeight: FontWeight.w900),),
-                              Text('olor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.o olor sit',style: TextStyle(color: Colors.white,fontSize: 14,fontWeight: FontWeight.w200),),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Discover\nGreatness',style: TextStyle(color: primaryColor,fontSize: 25,fontWeight: FontWeight.w900),),
-                              Text('The first  community for young athlete enablement and empowerment.',style: TextStyle(color: Colors.white,fontSize: 14,fontWeight: FontWeight.w200),),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Resources\nfor Coaches',style: TextStyle(color: primaryColor,fontSize: 25,fontWeight: FontWeight.w900),),
-                              Text('olor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.o olor sitr adipiscing ',style: TextStyle(color: Colors.white,fontSize: 14,fontWeight: FontWeight.w200),),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(' For Guardians\n& Child Athletes',style: TextStyle(color: primaryColor,fontSize: 25,fontWeight: FontWeight.w900),),
-                              Text('olor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.o olor sitr adipiscing elit, sed r adipiscing elit, sed ',style: TextStyle(color: Colors.white,fontSize: 14,fontWeight: FontWeight.w200),),
-                            ],
-                          ),
-                        ],
-
-                      ),
-                    ),
-                    SizedBox(height: 20,),
-                    Center(
-                      child: InkWell(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  BottomNavBar()));
-
-                        },
-                        child: Container(
-                          height: 50,
-                         // width: MediaQuery.of(context).size.width*0.8,
-                          color: Colors.grey.shade900,
-                          alignment: Alignment.center,
-                          child: Text('GET STARTED',style: TextStyle(color: primaryColor),),
-                        ),
-                      ),
-                    )
+            Container(
+              padding: const EdgeInsets.all(20),
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    const Color(0xCC000000),
+                    const Color(0x00000000),
+                    const Color(0x00000000),
+                    const Color(0xCC000000),
+                    const Color(0xCC000000),
                   ],
                 ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Image.asset('assets/images/logo.png',height: 30,),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: const [
+                          Text('Already have an account?',style: TextStyle(color: Colors.white,fontSize: 12),),
+                          Text('SIGN IN',style: TextStyle(color: primaryColor,fontSize: 15,fontWeight: FontWeight.bold),)
+                        ],
+                      )
+                    ],
+                  ),
+
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Image.asset('assets/images/slogan.png',height: 200,),
+                        SizedBox(height: 40,),
+                        SmoothPageIndicator(
+                            controller: controller,  // PageController
+                            count:  4,
+                            effect:  WormEffect(
+                              spacing:  10,
+                              radius:  4.0,
+                              dotWidth:  5.0,
+                              dotHeight:  5.0,
+                              activeDotColor: primaryColor,
+                              dotColor: Colors.grey.shade300,
+                              paintStyle:  PaintingStyle.fill,
+                              strokeWidth:  1.5,
+                            ),  // your preferred  effect
+                            onDotClicked: (index){
+                              controller.animateToPage(index,duration: const Duration(seconds: 1),curve: Curves.easeInOut);
+                              controller2.animateToPage(index,duration: const Duration(seconds: 1),curve: Curves.easeInOut);
+                            }
+                        ),
+                        SizedBox(height: 20,),
+                        Container(
+                          height: 150,
+                          width: MediaQuery.of(context).size.width*0.5,
+                          child: PageView(
+                            physics: const NeverScrollableScrollPhysics(),
+                            controller: controller2,
+                            children: const [
+
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Our Sport\nis Ours',style: TextStyle(color: primaryColor,fontSize: 25,fontWeight: FontWeight.w900),),
+                                  SizedBox(height: 20,),
+                                  Text('olor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.o olor sit',style: TextStyle(color: Colors.white,fontSize: 14,fontWeight: FontWeight.w200),),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Discover\nGreatness',style: TextStyle(color: primaryColor,fontSize: 25,fontWeight: FontWeight.w900),),
+                                  SizedBox(height: 20,),
+                                  Text('The first  community for young athlete enablement and empowerment.',style: TextStyle(color: Colors.white,fontSize: 14,fontWeight: FontWeight.w200),),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Resources\nfor Coaches',style: TextStyle(color: primaryColor,fontSize: 25,fontWeight: FontWeight.w900),),
+                                  SizedBox(height: 20,),
+                                  Text('olor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.o olor sitr adipiscing ',style: TextStyle(color: Colors.white,fontSize: 14,fontWeight: FontWeight.w200),),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(' For Guardians\n& Child Athletes',style: TextStyle(color: primaryColor,fontSize: 25,fontWeight: FontWeight.w900),),
+                                  SizedBox(height: 20,),
+                                  Text('olor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.o olor sitr adipiscing elit, sed r adipiscing elit, sed ',style: TextStyle(color: Colors.white,fontSize: 14,fontWeight: FontWeight.w200),),
+                                ],
+                              ),
+                            ],
+
+                          ),
+                        ),
+                        SizedBox(height: 20,),
+                      ],
+                    ),
+                  ),
+
+                  Center(
+                    child: InkWell(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  BottomNavBar()));
+
+                      },
+                      child: Container(
+                        height: 60,
+                        width: MediaQuery.of(context).size.width*0.8,
+                        color: Colors.grey.shade900,
+                        alignment: Alignment.center,
+                        child: Text('GET STARTED',style: TextStyle(color: primaryColor),),
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
 
