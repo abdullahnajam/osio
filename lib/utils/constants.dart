@@ -16,6 +16,17 @@ final f = DateFormat('MMMM dd, yyyy');
 Color _baseColor = Color(0xff9A5B83);
 Color optionColor = Color(0xff5E2D4D);
 
+LinearGradient discoverVideoGradient=LinearGradient(
+  begin: Alignment.topCenter,
+  end: Alignment.bottomCenter,
+  colors: [
+    const Color(0x00000000),
+    const Color(0x00000000),
+    primaryColor.withOpacity(0.3),
+    primaryColor.withOpacity(0.5),
+  ],
+);
+
 List<Color> shades = [
   Color(0xff9A5B83),
   Color(0xff5E2D4D),

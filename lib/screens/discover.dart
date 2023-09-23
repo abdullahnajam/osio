@@ -9,6 +9,7 @@ import 'package:osio/screens/discovery_details.dart';
 import 'package:osio/screens/filter_screen.dart';
 import 'package:osio/utils/constants.dart';
 import 'package:provider/provider.dart';
+import 'package:video_player/video_player.dart';
 
 import '../api/firebase_api.dart';
 
@@ -25,13 +26,35 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
   @override
   void initState() {
     _tabController = new TabController(length: 3, vsync: this);
+
     super.initState();
+
+    _controller = VideoPlayerController.asset("assets/videos/1.mp4")..setLooping(true);
+    _initializeVideoPlayerFuture = _controller!.initialize();
+
+    _controller2 = VideoPlayerController.asset("assets/videos/2.mp4")..setLooping(true);
+    _initializeVideoPlayerFuture2 = _controller2!.initialize();
+
+    _controller3 = VideoPlayerController.asset("assets/videos/3.mp4")..setLooping(true);
+    _initializeVideoPlayerFuture3 = _controller3!.initialize();
   }
   @override
   void dispose() {
     _tabController!.dispose();
     super.dispose();
   }
+
+  bool showV1=true;
+  bool showV2=true;
+  bool showV3=true;
+  VideoPlayerController? _controller;
+  Future<void>? _initializeVideoPlayerFuture;
+
+  VideoPlayerController? _controller2;
+  Future<void>? _initializeVideoPlayerFuture2;
+
+  VideoPlayerController? _controller3;
+  Future<void>? _initializeVideoPlayerFuture3;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,8 +74,8 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                     children: [
                       const Text('Discover',style: TextStyle(color: Colors.black,fontSize: 25,fontWeight: FontWeight.w900),),
                       const SizedBox(height: 10,),
-                      const Text('incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, minim veniam, ',style: TextStyle(fontSize:13,color: Colors.black),),
-                      const SizedBox(height: 20,),
+                      const Text('incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, minim veniam, ',style: TextStyle(fontSize:10,color: Colors.black),),
+                      const SizedBox(height: 10,),
                       Row(
                         children: [
                           InkWell(
@@ -83,7 +106,7 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                               if(provider.getFilterCount()>0) {
                                 return Container(
                                   height: 40,
-                                  margin: EdgeInsets.only(left: 10),
+                                  margin: const EdgeInsets.only(left: 10),
                                   width: MediaQuery.of(context).size.width*0.35,
                                   decoration: BoxDecoration(
                                       color: Colors.red,
@@ -94,13 +117,13 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
 
-                                      Text('${provider.getFilterCount()}  FILTERS',style: TextStyle(color: Colors.white),),
+                                      Text('${provider.getFilterCount()}  FILTERS',style: const TextStyle(color: Colors.white),),
                                       const SizedBox(width: 10,),
                                       InkWell(
                                         onTap: (){
                                           provider.reset();
                                         },
-                                        child: Icon(Icons.close,color: Colors.white,size: 20,),
+                                        child: const Icon(Icons.close,color: Colors.white,size: 20,),
                                       )
                                     ],
                                   )
@@ -112,11 +135,12 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20,),
+                      const SizedBox(height: 0,),
                     ],
                   ),
                 ),
                 TabBar(
+                  padding: EdgeInsets.zero,
                   unselectedLabelColor: Colors.grey,
                   indicatorColor: Colors.black,
                   labelColor: Colors.black,
@@ -144,30 +168,89 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                         height: MediaQuery.of(context).size.height*0.7,
                         child: ListView(
                           children: [
-                            Padding(
+                            if(showV1)
+                              Padding(
                               padding: const EdgeInsets.all(20),
                               child: Container(
 
                                 width: MediaQuery.of(context).size.width*0.5,
                                 height: MediaQuery.of(context).size.height*0.4,
                                 decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(50),
-                                        bottomRight: Radius.circular(50)
-                                    ),
-                                    image: DecorationImage(
-                                        image: AssetImage('assets/images/head1.png'),
-                                        fit: BoxFit.cover
-                                    )
+
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(50),
+                                      bottomRight: Radius.circular(50)
+                                  ),
+
                                 ),
                                 child: Stack(
                                   children: [
-                                    const Align(
-                                        alignment: Alignment.topRight,
-                                        child: Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: Icon(Icons.close,color: Colors.white,),
-                                        )
+                                    FutureBuilder(
+                                      future: _initializeVideoPlayerFuture,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState == ConnectionState.done) {
+                                          _controller!.play();
+
+                                          return Container(
+                                            width: MediaQuery.of(context).size.width,
+                                            height: MediaQuery.of(context).size.height,
+                                            decoration: const BoxDecoration(
+
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(50),
+                                                  bottomRight: Radius.circular(50)
+                                              ),
+
+                                            ),
+                                            child: ClipRRect(
+                                              borderRadius: const BorderRadius.only(
+                                                  topLeft: Radius.circular(50),
+                                                  bottomRight: Radius.circular(50)
+                                              ),
+                                              child: AspectRatio(
+                                                aspectRatio: _controller!.value.aspectRatio,
+                                                child: VideoPlayer(_controller!),
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          return Container(
+                                            decoration: const BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(50),
+                                                  bottomRight: Radius.circular(50)
+                                              ),
+                                              color: primaryColor,
+                                            ),
+
+                                            //child: CircularProgressIndicator(),
+                                          );
+                                        }
+                                      },
+                                    ),
+
+
+                                    const Padding(
+                                      padding: EdgeInsets.all(20),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Text('Good\nCoaching\nMatters.',style: TextStyle(color: Colors.white,fontSize: 22,fontWeight: FontWeight.w900),),
+
+                                          Text('olor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.o olor sit',style: TextStyle(color: Colors.white),),
+                                          SizedBox(height: 20,)
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(50),
+                                            bottomRight: Radius.circular(50)
+                                        ),
+                                        gradient: discoverVideoGradient
+                                      ),
                                     ),
                                     Align(
                                         alignment: Alignment.bottomRight,
@@ -180,7 +263,7 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                                                   bottomRight: Radius.circular(50)
                                               ),
                                               image: DecorationImage(
-                                                  image: AssetImage('assets/images/color1.png',),
+                                                  image: AssetImage('assets/images/color1.png'),
                                                   fit: BoxFit.cover
                                               )
 
@@ -188,67 +271,26 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
 
                                         )
                                     ),
-                                    const Padding(
-                                      padding: EdgeInsets.all(20),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [
-                                          Text('Good\nCoaching\nMatters.',style: TextStyle(color: Colors.white,fontSize: 32,fontWeight: FontWeight.w900),),
-
-                                          Text('olor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.o olor sit',style: TextStyle(color: Colors.white),),
-                                          SizedBox(height: 20,)
-                                        ],
-                                      ),
+                                    Align(
+                                        alignment: Alignment.topRight,
+                                        child: Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: InkWell(
+                                              onTap: (){
+                                                print('tapped $showV1');
+                                                setState(() {
+                                                  showV1=false;
+                                                });
+                                              },
+                                              child: Icon(Icons.close,color: Colors.white,),
+                                            )
+                                        )
                                     ),
 
                                   ],
                                 ),
                               ),
                             ),
-                            /*StreamBuilder<QuerySnapshot>(
-                          stream: FirebaseFirestore.instance.collection('coaches').snapshots(),
-                          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                            if (snapshot.hasError) {
-                              return const Text('Something went wrong');
-                            }
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return Container(
-                                margin: const EdgeInsets.all(30),
-                                alignment: Alignment.center,
-                                child: const CircularProgressIndicator(),
-                              );
-                            }
-                            if (snapshot.data!.size==0){
-                              return Container(
-                                width: double.infinity,
-                                margin: const EdgeInsets.all(20),
-                                padding: const EdgeInsets.all(80),
-                                alignment: Alignment.center,
-                                child: const Text("No data found"),
-                              );
-                            }
-                            print("size ${snapshot.data!.size}");
-                            return  Padding(
-                              padding: const EdgeInsets.only(left: 20,right: 20),
-                              child: GridView(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 5.0,
-                                  mainAxisSpacing: 12.0,
-                                  childAspectRatio:MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1.8),
-                                ),
-                                children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                                  Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-                                  CoachModel model=CoachModel.fromMap(data, document.reference.id);
-                                  return coachCard(model);
-                                }).toList(),
-                              ),
-                            );
-                          },
-                        ),*/
                             FutureBuilder<List<CoachModel>>(
                                 future: FirebaseApi.getCoaches(context),
                                 builder: (context, AsyncSnapshot<List<CoachModel>> snapshot) {
@@ -308,6 +350,7 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                         height: MediaQuery.of(context).size.height*0.7,
                         child: ListView(
                           children: [
+                            if(showV2)
                             Padding(
                               padding: const EdgeInsets.all(20),
                               child: Container(
@@ -315,23 +358,81 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                                 width: MediaQuery.of(context).size.width*0.5,
                                 height: MediaQuery.of(context).size.height*0.4,
                                 decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(50),
-                                        bottomRight: Radius.circular(50)
-                                    ),
-                                    image: DecorationImage(
-                                        image: AssetImage('assets/images/head2.png'),
-                                        fit: BoxFit.cover
-                                    )
+
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(50),
+                                      bottomRight: Radius.circular(50)
+                                  ),
+
                                 ),
                                 child: Stack(
                                   children: [
-                                    const Align(
-                                        alignment: Alignment.topRight,
-                                        child: Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: Icon(Icons.close,color: Colors.white,),
-                                        )
+                                    FutureBuilder(
+                                      future: _initializeVideoPlayerFuture2,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState == ConnectionState.done) {
+                                          _controller2!.play();
+
+                                          return Container(
+                                            width: MediaQuery.of(context).size.width,
+                                            height: MediaQuery.of(context).size.height,
+                                            decoration: const BoxDecoration(
+
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(50),
+                                                  bottomRight: Radius.circular(50)
+                                              ),
+
+                                            ),
+                                            child: ClipRRect(
+                                              borderRadius: const BorderRadius.only(
+                                                  topLeft: Radius.circular(50),
+                                                  bottomRight: Radius.circular(50)
+                                              ),
+                                              child: AspectRatio(
+                                                aspectRatio: _controller2!.value.aspectRatio,
+                                                child: VideoPlayer(_controller2!),
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          return Container(
+                                            decoration: const BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(50),
+                                                  bottomRight: Radius.circular(50)
+                                              ),
+                                              color: primaryColor,
+                                            ),
+
+                                            //child: CircularProgressIndicator(),
+                                          );
+                                        }
+                                      },
+                                    ),
+
+
+                                    const Padding(
+                                      padding: EdgeInsets.all(20),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Text('Discover\nLocal\nPrograms.',style: TextStyle(color: Colors.white,fontSize: 22,fontWeight: FontWeight.bold),),
+
+                                          Text('olor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.o olor sit',style: TextStyle(color: Colors.white),),
+                                          SizedBox(height: 20,)
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(50),
+                                            bottomRight: Radius.circular(50)
+                                        ),
+                                        gradient: discoverVideoGradient
+                                      ),
                                     ),
                                     Align(
                                         alignment: Alignment.bottomRight,
@@ -344,7 +445,7 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                                                   bottomRight: Radius.circular(50)
                                               ),
                                               image: DecorationImage(
-                                                  image: AssetImage('assets/images/color2.png',),
+                                                  image: AssetImage('assets/images/color2.png'),
                                                   fit: BoxFit.cover
                                               )
 
@@ -352,18 +453,20 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
 
                                         )
                                     ),
-                                    const Padding(
-                                      padding: EdgeInsets.all(20),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [
-                                          Text('Discover\nLocal\nPrograms',style: TextStyle(color: Colors.white,fontSize: 32,fontWeight: FontWeight.w900),),
+                                    Align(
+                                        alignment: Alignment.topRight,
+                                        child: Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: InkWell(
+                                              onTap: (){
 
-                                          Text('olor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.o olor sit',style: TextStyle(color: Colors.white),),
-                                          SizedBox(height: 20,)
-                                        ],
-                                      ),
+                                                setState(() {
+                                                  showV2=false;
+                                                });
+                                              },
+                                              child: Icon(Icons.close,color: Colors.white,),
+                                            )
+                                        )
                                     ),
 
                                   ],
@@ -421,49 +524,7 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                                   }
                                 }
                             ),
-                            /*StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance.collection('programs').snapshots(),
-                              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                                if (snapshot.hasError) {
-                                  return const Text('Something went wrong');
-                                }
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return Container(
-                                    margin: const EdgeInsets.all(30),
-                                    alignment: Alignment.center,
-                                    child: const CircularProgressIndicator(),
-                                  );
-                                }
-                                if (snapshot.data!.size==0){
-                                  return Container(
-                                    width: double.infinity,
-                                    margin: const EdgeInsets.all(20),
-                                    padding: const EdgeInsets.all(80),
-                                    alignment: Alignment.center,
-                                    child: const Text("No data found"),
-                                  );
-                                }
-                                print("size ${snapshot.data!.size}");
-                                return  Padding(
-                                  padding: const EdgeInsets.only(left: 20,right: 20),
-                                  child: GridView(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      crossAxisSpacing: 5.0,
-                                      mainAxisSpacing: 12.0,
-                                      childAspectRatio:MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1.8),
-                                    ),
-                                    children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                                      Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-                                      ProgramModel model=ProgramModel.fromMap(data, document.reference.id);
-                                      return programCard(model);
-                                    }).toList(),
-                                  ),
-                                );
-                              },
-                            ),*/
+
 
                             const SizedBox(height: 20,)
                           ],
@@ -473,6 +534,7 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                         height: MediaQuery.of(context).size.height*0.7,
                         child: ListView(
                           children: [
+                            if(showV3)
                             Padding(
                               padding: const EdgeInsets.all(20),
                               child: Container(
@@ -480,23 +542,81 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                                 width: MediaQuery.of(context).size.width*0.5,
                                 height: MediaQuery.of(context).size.height*0.4,
                                 decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(50),
-                                        bottomRight: Radius.circular(50)
-                                    ),
-                                    image: DecorationImage(
-                                        image: AssetImage('assets/images/head3.png'),
-                                        fit: BoxFit.cover
-                                    )
+
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(50),
+                                      bottomRight: Radius.circular(50)
+                                  ),
+
                                 ),
                                 child: Stack(
                                   children: [
-                                    const Align(
-                                        alignment: Alignment.topRight,
-                                        child: Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: Icon(Icons.close,color: Colors.white,),
-                                        )
+                                    FutureBuilder(
+                                      future: _initializeVideoPlayerFuture3,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState == ConnectionState.done) {
+                                          _controller3!.play();
+
+                                          return Container(
+                                            width: MediaQuery.of(context).size.width,
+                                            height: MediaQuery.of(context).size.height,
+                                            decoration: const BoxDecoration(
+
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(50),
+                                                  bottomRight: Radius.circular(50)
+                                              ),
+
+                                            ),
+                                            child: ClipRRect(
+                                              borderRadius: const BorderRadius.only(
+                                                  topLeft: Radius.circular(50),
+                                                  bottomRight: Radius.circular(50)
+                                              ),
+                                              child: AspectRatio(
+                                                aspectRatio: _controller3!.value.aspectRatio,
+                                                child: VideoPlayer(_controller3!),
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          return Container(
+                                            decoration: const BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(50),
+                                                  bottomRight: Radius.circular(50)
+                                              ),
+                                              color: primaryColor,
+                                            ),
+
+                                            //child: CircularProgressIndicator(),
+                                          );
+                                        }
+                                      },
+                                    ),
+
+
+                                    const Padding(
+                                      padding: EdgeInsets.all(20),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Text('Train\n& Coach\nAnywhere.',style: TextStyle(color: Colors.white,fontSize: 22,fontWeight: FontWeight.w900),),
+
+                                          Text('olor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.o olor sit',style: TextStyle(color: Colors.white),),
+                                          SizedBox(height: 20,)
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(50),
+                                            bottomRight: Radius.circular(50)
+                                        ),
+                                        gradient: discoverVideoGradient
+                                      ),
                                     ),
                                     Align(
                                         alignment: Alignment.bottomRight,
@@ -509,7 +629,7 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                                                   bottomRight: Radius.circular(50)
                                               ),
                                               image: DecorationImage(
-                                                  image: AssetImage('assets/images/color3.png',),
+                                                  image: AssetImage('assets/images/color3.png'),
                                                   fit: BoxFit.cover
                                               )
 
@@ -517,18 +637,20 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
 
                                         )
                                     ),
-                                    const Padding(
-                                      padding: EdgeInsets.all(20),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [
-                                          Text('Train\n& Coach\nAnywhere',style: TextStyle(color: Colors.white,fontSize: 32,fontWeight: FontWeight.w900),),
-
-                                          Text('olor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.o olor sit',style: TextStyle(color: Colors.white),),
-                                          SizedBox(height: 20,)
-                                        ],
-                                      ),
+                                    Align(
+                                        alignment: Alignment.topRight,
+                                        child: Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: InkWell(
+                                              onTap: (){
+                                                print('tapped $showV1');
+                                                setState(() {
+                                                  showV3=false;
+                                                });
+                                              },
+                                              child: Icon(Icons.close,color: Colors.white,),
+                                            )
+                                        )
                                     ),
 
                                   ],
@@ -586,49 +708,6 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
                                   }
                                 }
                             ),
-                            /*StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance.collection('facilities').snapshots(),
-                              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                                if (snapshot.hasError) {
-                                  return const Text('Something went wrong');
-                                }
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return Container(
-                                    margin: const EdgeInsets.all(30),
-                                    alignment: Alignment.center,
-                                    child: const CircularProgressIndicator(),
-                                  );
-                                }
-                                if (snapshot.data!.size==0){
-                                  return Container(
-                                    width: double.infinity,
-                                    margin: const EdgeInsets.all(20),
-                                    padding: const EdgeInsets.all(80),
-                                    alignment: Alignment.center,
-                                    child: const Text("No data found"),
-                                  );
-                                }
-                                print("size ${snapshot.data!.size}");
-                                return  Padding(
-                                  padding: const EdgeInsets.only(left: 20,right: 20),
-                                  child: GridView(
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      crossAxisSpacing: 5.0,
-                                      mainAxisSpacing: 12.0,
-                                      childAspectRatio:MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1.8),
-                                    ),
-                                    children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                                      Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-                                      FacilityModel model=FacilityModel.fromMap(data, document.reference.id);
-                                      return facilityCard(model);
-                                    }).toList(),
-                                  ),
-                                );
-                              },
-                            ),*/
                             const SizedBox(height: 20,)
                           ],
                         ),
@@ -644,6 +723,7 @@ class _DiscoverState extends State<Discover> with SingleTickerProviderStateMixin
       ),
     );
   }
+
   Widget coachCard(CoachModel model){
     return InkWell(
       onTap: (){

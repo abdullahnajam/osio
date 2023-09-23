@@ -9,6 +9,7 @@ import 'package:osio/utils/constants.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:video_player/video_player.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
@@ -21,6 +22,18 @@ class _HomepageState extends State<Homepage> {
   final PageController controller = PageController();
   int _selectedValue = 0;
   bool pollAnswered=false;
+
+  VideoPlayerController? _controller;
+  Future<void>? _initializeVideoPlayerFuture;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _controller = VideoPlayerController.asset("assets/videos/home.mp4")..setLooping(true);
+    _initializeVideoPlayerFuture = _controller!.initialize();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,27 +42,51 @@ class _HomepageState extends State<Homepage> {
         child: ListView(
           children: [
             Container(
-              padding: const EdgeInsets.all(20),
+
               height: 400,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/home1.png'),
-                  fit: BoxFit.cover
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+
+
+              child: Stack(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Image.asset('assets/images/logo.png',height: 30,fit: BoxFit.cover,color: Colors.white,)
-                    ],
+                  FutureBuilder(
+                    future: _initializeVideoPlayerFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        _controller!.play();
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                          child: AspectRatio(
+                            aspectRatio: _controller!.value.aspectRatio,
+                            child: VideoPlayer(_controller!),
+                          ),
+                        );
+                      } else {
+                        return Container(
+                          color: primaryColor,
+                          //child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
                   ),
-                  const SizedBox(height: 80,),
-                  Image.asset('assets/images/slogan.png',height: 130,fit: BoxFit.cover,),
-                  const SizedBox(height: 20,),
-                  const Text('incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, minim veniam, ',style: TextStyle(fontSize:13,color: Colors.white),)
+                  Padding(
+                    padding: const EdgeInsets.all(50),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Image.asset('assets/images/logo.png',height: 30,fit: BoxFit.cover,color: Colors.white,)
+                          ],
+                        ),
+                        const SizedBox(height: 80,),
+                        Image.asset('assets/images/slogan.png',height: 130,fit: BoxFit.cover,),
+                        const SizedBox(height: 20,),
+                        const Text('incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, minim veniam, ',style: TextStyle(fontSize:13,color: Colors.white),)
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

@@ -22,7 +22,7 @@ class _DiscoveryDetailsState extends State<DiscoveryDetails> {
               children: [
 
 
-                Image.asset('assets/images/blur2.png',fit: BoxFit.fitWidth,height: MediaQuery.of(context).size.height*0.5,width: MediaQuery.of(context).size.width,),
+                Image.asset('assets/images/blur2.jpg',fit: BoxFit.fitWidth,height: MediaQuery.of(context).size.height*0.5,width: MediaQuery.of(context).size.width,),
                 Align(
                   alignment: Alignment.topRight,
                   child: Padding(

@@ -200,7 +200,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
 
             ),
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(50),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
